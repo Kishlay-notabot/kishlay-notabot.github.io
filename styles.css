@@ -1,0 +1,12 @@
+.txt {
+  font-family: 'Noto Sans', sans-serif;
+}
+.ctr {
+  text-align: center;
+}
+ body {
+    padding: 20px;
+    font-size: 18px;  
+  line-height: 1.6;       
+  color: #222;
+ }
