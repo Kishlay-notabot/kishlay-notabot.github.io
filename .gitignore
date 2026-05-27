@@ -1,1 +1,3 @@
 engine/
+static/
+*.DS_Store
