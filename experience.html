@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>experience — Kishlay Kisu</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 0 20px;
+            line-height: 1.6;
+            color: #222;
+        }
+        a { color: #0066cc; }
+        a:visited { color: #551a8b; }
+        h1 { font-size: 1.4em; margin-bottom: 0.5em; }
+        p, li { font-size: 0.95em; }
+        .nav { font-size: 1em; text-align: right; margin-bottom: 1.5em; color: #555; }
+        hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+
+        .timeline {
+            position: relative;
+            padding-left: 80px;
+            padding-top: 40px;
+        }
+
+        .tl-line-svg {
+            position: absolute;
+            left: 50px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+        }
+
+        .tl-path {
+            stroke: #ccc;
+            stroke-width: 2;
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            animation: draw-line 1.5s ease-out forwards;
+        }
+
+        @keyframes draw-line {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .tl-item {
+            position: relative;
+            margin-bottom: 2.5em;
+            opacity: 0;
+            transform: translateX(12px);
+            animation: slide-in 0.5s ease-out calc(var(--i) * 0.2s + 0.7s) forwards;
+        }
+
+        @keyframes slide-in {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .tl-year {
+            position: absolute;
+            left: -80px;
+            top: 0;
+            width: 40px;
+            text-align: right;
+            font-size: 0.85em;
+            color: #555;
+            opacity: 0;
+            animation: fade-in 0.3s ease-out calc(var(--i) * 0.2s + 0.5s) forwards;
+        }
+
+        @keyframes fade-in {
+            to { opacity: 1; }
+        }
+
+        .tl-entry {
+            position: relative;
+            font-size: 0.95em;
+            margin-bottom: 0.3em;
+        }
+
+        .tl-entry::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            width: 29px;
+            height: 2px;
+            background: #ccc;
+            transform: translateY(-50%);
+        }
+
+        .tl-date {
+            color: #555;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 0.85em;
+        }
+
+        .tl-desc {
+            font-size: 0.9em;
+            color: #444;
+            margin: 0.3em 0 1em 0;
+        }
+
+        .tl-item:last-child .tl-desc {
+            margin-bottom: 0;
+        }
+
+        .tl-intro {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 2em;
+        }
+
+        .tl-now-label {
+            position: absolute;
+            top: -1.5em;
+            left: 30px;
+            font-size: 0.75em;
+            color: #0066cc;
+            font-style: italic;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<p class="nav"><a href="index.html">home</a> · experience</p>
+<h1>experience</h1>
+
+<p class="tl-intro">this is a quick rundown of my experience and major things i've worked on ever since i've actively been involved in programming. 
+    this does not encompass all my involvements in the given time ranges, 
+    all the side projects and work i've mentioned have been developed in between the time span or along with the major keystones mentioned below.
+</p>
+
+<div class="timeline">
+    <span class="tl-now-label">currently here</span>
+    <svg class="tl-line-svg" viewBox="0 0 2 2000" preserveAspectRatio="none">
+        <line x1="1" y1="0" x2="1" y2="2000" class="tl-path" />
+    </svg>
+
+    <div class="tl-item" style="--i:0">
+        <span class="tl-year">2026</span>
+        <div class="tl-entry">
+            <span class="tl-date">December 2025 - Current</span> · <strong>NLP Research Intern</strong> · IIT Roorkee
+        </div>
+        <p class="tl-desc">numbers go inside thingamabob - numbers come out </p>
+    </div>
+
+    <div class="tl-item" style="--i:1">
+        <span class="tl-year">2025</span>
+        <div class="tl-entry">
+            <span class="tl-date">March 2025 - April 2025</span> · <strong>SWE (part time)</strong> · AIATELLA
+        </div>
+        <p class="tl-desc">gizmo engineering</p>
+    </div>
+
+    <div class="tl-item" style="--i:2">
+        <span class="tl-year">2024</span>
+        <div class="tl-entry">
+            <span class="tl-date">April 2024 - March 2025</span> · <strong>Intern</strong> · Copilotly
+        </div>
+        <p class="tl-desc">thingamajig engineering</p>
+    </div>
+
+    <div class="tl-item" style="--i:3">
+        <span class="tl-year">2023</span>
+        <div class="tl-entry">
+            <span class="tl-date">June 2023 - August 2023</span> · <strong>Intern</strong> · IIT Delhi
+        </div>
+        <p class="tl-desc">figuring out uhhh a whosawhatzit</p>
+    </div>
+
+    <div class="tl-item" style="--i:4">
+        <span class="tl-year">2023</span>
+        <div class="tl-entry">
+            <span class="tl-date">March 2023 - July 2023</span> · <strong>Co-founder</strong> · Young Protons
+        </div>
+        <p class="tl-desc">thing thing thing sahur</p>
+    </div>
+
+    <div class="tl-item" style="--i:5">
+        <span class="tl-year">2022</span>
+        <div class="tl-entry">
+            <span class="tl-date">May 2022 - June 2022</span> · <strong>Project Intern</strong> · IIT Delhi
+        </div>
+        <p class="tl-desc">whatchamacallit 🤔🤔🤔</p>
+    </div>
+</div>
+
+</body>
+</html>
