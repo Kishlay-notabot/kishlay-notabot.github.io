@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reviving the IBM Punch Card</title>
+<style>
+html, body {
+    margin:0;
+    background:#1a1a1a;
+    color:#ddd;
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height:1.6;
+}
+
+a { color:#77aaff; }
+a:visited { color:#aa88dd; }
+
+.nav {
+    text-align:right;
+    padding:20px 20px 0;
+    max-width:960px;
+    margin:0 auto;
+    color:#888;
+    font-size:0.95em;
+}
+
+.container {
+    max-width:960px;
+    margin:0 auto;
+    padding:0 20px;
+}
+
+h1 {
+    font-size:1.8em;
+    margin-bottom:0.5em;
+    color:#eee;
+}
+
+.placeholder-text {
+    color:#aaa;
+    font-size:0.95em;
+    margin-bottom:2em;
+}
+
+.grid-caption {
+    text-align:center;
+    color:#777;
+    font-size:0.85em;
+    margin-top:-1.5em;
+    margin-bottom:2em;
+}
+
+#cardpunch-section {
+    margin-bottom:2em;
+}
+
+#cardpunch-section #chars {
+    font-family:monospace;
+    font-size:12px;
+    color:#888;
+    letter-spacing:1px;
+    margin-bottom:4px;
+    white-space:nowrap;
+    overflow-x:auto;
+}
+
+#inputRow {
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+#cardText {
+    flex:1;
+    background:#111;
+    color:rgb(255, 255, 255);
+    font-family:monospace;
+    font-size:16px;
+    border:1px solid #555;
+    padding:6px 10px;
+    max-width:80ch;
+}
+
+#cardText:focus {
+    outline:none;
+    border-color:#0f0;
+}
+
+#cardWrap {
+    border:1px solid #444;
+    background:#111;
+    text-align:center;
+}
+
+canvas {
+    display:block;
+    max-width:100%;
+    max-height:calc(100vh - 140px);
+    object-fit:contain;
+}
+
+button {
+    padding:8px 16px;
+    font-size:14px;
+    background:#333;
+    color:white;
+    border:1px solid #555;
+    cursor:pointer;
+}
+
+button:hover {
+    background:#444;
+}
+
+#info {
+    margin-top:8px;
+    color:#666;
+    font-family:monospace;
+    font-size:12px;
+}
+
+#toast {
+    position:fixed;
+    bottom:30px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#c33;
+    color:white;
+    font-family:monospace;
+    font-size:14px;
+    padding:10px 20px;
+    border-radius:4px;
+    display:none;
+    z-index:20;
+    animation:fadeIn .2s;
+}
+
+@keyframes fadeIn {
+    from{opacity:0;transform:translateX(-50%) translateY(10px)}
+    to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+
+.image-grid {
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:12px;
+    margin:2em 0;
+}
+
+.image-grid img {
+    width:100%;
+    height:200px;
+    object-fit:contain;
+    background:#111;
+    border:1px solid #333;
+    border-radius:4px;
+}
+
+.comparison-row {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin:2em 0;
+}
+
+.comparison-item img {
+    width:100%;
+    height:200px;
+    object-fit:contain;
+    background:#111;
+    border:1px solid #333;
+    border-radius:4px;
+}
+
+.comparison-caption {
+    text-align:center;
+    color:#777;
+    font-size:0.85em;
+    margin-top:6px;
+}
+
+.credit-section, .references-section {
+    margin-top:2em;
+    color:#aaa;
+    font-size:0.95em;
+}
+
+.references-section ul {
+    list-style:none;
+    padding:0;
+}
+
+.references-section li {
+    margin-bottom:6px;
+}
+
+.references-section a {
+    word-break:break-all;
+}
+
+hr {
+    border:none;
+    border-top:1px solid #333;
+    margin:2em 0;
+}
+
+@media (max-width:700px) {
+    .image-grid {
+        grid-template-columns:repeat(2, 1fr);
+    }
+}
+</style>
+</head>
+<body>
+
+<p class="nav"><a href="index.html">home</a> · <a href="https://github.com/Kishlay-notabot/web-punchcard">star the code</a></p>
+
+<div class="container">
+
+<h1>Reviving the IBM Punch Card</h1>
+
+<p class="placeholder-text">I've always been fascinated with "retro" technology and the early computing/ internet era. I recently wanted to make some digital art for my art page, and I went online to surf the internet to find ways to implement it.
+    I built a tool for myself (runs fully in browser) which can emulate writing into a digital punch card. I used it to create some digital mixed media art for my page. I decided to document this journey and share the resources here.</p>
+
+<div class="image-grid">
+    <img src="assets/4275461a-e3fe-430c-b9afcf7e036e5da1.avif" alt="Punch card image 1" loading="lazy">
+    <img src="assets/c_codes4.gif" alt="C codes" loading="lazy">
+    <img src="assets/cardtabl.gif" alt="Card table" loading="lazy">
+    <img src="assets/IBM1130CopyCard.agr.jpg" alt="IBM 1130 copy card" loading="lazy">
+    <img src="assets/Industry_during_the_First_World_War-_Leicestershire_Q28124.jpg" alt="Industry during WWI" loading="lazy">
+    <img src="assets/keypunch.gif" alt="Keypunch machine" loading="lazy">
+    <img src="assets/Punched_card_program_deck.agr.jpg" alt="Punched card program deck" loading="lazy">
+    <img src="assets/PunchedCardPrintingPlate.agr.jpg" alt="Punched card printing plate" loading="lazy">
+</div>
+
+<p class="grid-caption">A collection of some pretty images I found while reading articles online.</p>
+
+<p class="placeholder-text">The surfing and the development process introduced me to a lot of beautiful visuals and resources. I have compiled the relics into a small trove.
+    In order to create this tool, I took a scan of a punch card from wikipedia and I edited it by myself to fill up all the gaps to use it as a base for the code. 
+    A huge credit to Michael Hamilton's blog post (linked below) from 2012, I based off my implementation from his interactive JS code.
+    <br><br> My implementation involved firstly spending a lot of time editing the original image to restore all the punched numbers, and getting the 960 desired points by using a local script which plotted a grid anchored off of two rows of punches in the original image (achieved via a local script). 
+    The stored coordinates are then used to "punch holes" into the empty punch card. 
+</p>
+
+<div id="cardpunch-section">
+
+<div id="chars">&amp;-0123456789ABCDEFGHIJKLMNOPQR/STUVWXYZ:#@'="`.&lt;(+|!$*);^~,%_&gt;?</div>
+
+<div id="inputRow">
+    <input id="cardText" type="text" size="80" maxlength="80" placeholder="Type card data here...">
+    <button id="saveBtn">Save PNG</button>
+</div>
+
+<div id="cardWrap">
+    <canvas id="canvas"></canvas>
+</div>
+
+<div id="info">Type up to 80 characters. Punches appear in real time.</div>
+
+</div>
+
+<p class="placeholder-text">The specific variant I have used for this project is the "IBM Card" which was around 7x3 inches with 80 columns and 12 rows. That's why we can fit upto 80 characters in the above viz.
+    <br><br>I have huge respect and a feeling of awe when it comes to the technological feats and the people who have worked hard to achieve them. Their hard work has brought us here, and we are standing on the shoulder of giants, it's very easy for us now to take things for granted. 
+    A single photo (~4MB) taken from modern phones would take around 33,000 punch cards to store. And reading/ writing them is a challenge of it's own.  
+</p>
+
+<div class="comparison-row">
+    <div class="comparison-item">
+        <img src="assets/Blue-punch-card-front-horiz.png" alt="Original blue punch card" loading="lazy">
+        <p class="comparison-caption">The original image sourced from Wikipedia</p>
+    </div>
+    <div class="comparison-item">
+        <img src="assets/punch.png" alt="Punched card" loading="lazy">
+        <p class="comparison-caption">Manual fixes done by me</p>
+    </div>
+</div>
+
+<div class="credit-section">
+    <h2>Credits</h2>
+    <p>Huge credit to the blogpost <a href="https://codeincluded.blogspot.com/2012/07/punchcard-reader-software.html">codeincluded</a> for their implementation and writeup -> helped me a lot in building this!</p>
+
+    <h2>References</h2>
+    <ul>
+        <li><a href="https://en.wikipedia.org/wiki/Punched_card">Punched Card wiki — Wikipedia</a></li>
+        <li><a href="https://www.ibm.com/history/punched-card">IBM history — punch cards</a></li>
+        <li><a href="https://github.com/digitaltrails/punchedcardreader">punchedcardreader - GitHub</a></li>
+        <li><a href="https://codeincluded.blogspot.com/2012/07/punchcard-reader-software.html">original code in the blogpost - Code Included</a></li>
+        <li><a href="https://hackaday.io/project/205721-punch-cards-and-optical-reading">Related Hackaday project — Punch Cards and Optical Reading</a></li>
+        <li><a href="https://craftofcoding.wordpress.com/2017/01/28/read-your-own-punch-cards/">Reading punch cards — Craft of Coding</a></li>
+        <li><a href="https://gen5.info/$/LU0NS2XPG8MDVCVZS/">gen5 decoding guide</a></li>
+        <li><a href="https://www.masswerk.at/misc/card-punch-typography/part2-ibm029-EA.html">punch card typography — masswerk</a></li>
+        <li><a href="http://www.quadibloc.com/comp/cardint.htm">quadibloc — a lot of historical info</a></li>
+        <li><a href="https://www.youtube.com/watch?v=KG2M4ttzBnY">an amazing Computerphile video!</a></li>
+        <li><a href="https://www.youtube.com/watch?v=L7jAOcc9kBU">Center for Computing History YouTube video</a></li>
+    </ul>
+</div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const COLS=80;
+const ROWS=12;
+
+const originX=72;
+const originY=79;
+const colSpacing=(2133-72)/(COLS-1);
+const rowSpacing=(897-79)/(ROWS-1);
+
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+const input=document.getElementById("cardText");
+
+const bg=new Image();
+const hole=new Image();
+let loaded=0;
+
+function onLoad(){
+    loaded++;
+    if(loaded===2) init();
+}
+
+function onError(){
+    document.getElementById("info").textContent="Failed to load image. Check that assets/punch.png and assets/hole.png exist.";
+}
+
+bg.onload=onLoad;
+hole.onload=onLoad;
+bg.onerror=onError;
+hole.onerror=onError;
+bg.src="assets/punch.png";
+hole.src="assets/hole.png";
+
+const charMap={};
+charMap["&"]=parseInt("100000000000",2);
+charMap["-"]=parseInt("010000000000",2);
+charMap["0"]=parseInt("001000000000",2);
+charMap["1"]=parseInt("000100000000",2);
+charMap["2"]=parseInt("000010000000",2);
+charMap["3"]=parseInt("000001000000",2);
+charMap["4"]=parseInt("000000100000",2);
+charMap["5"]=parseInt("000000010000",2);
+charMap["6"]=parseInt("000000001000",2);
+charMap["7"]=parseInt("000000000100",2);
+charMap["8"]=parseInt("000000000010",2);
+charMap["9"]=parseInt("000000000001",2);
+charMap["A"]=parseInt("100100000000",2);
+charMap["B"]=parseInt("100010000000",2);
+charMap["C"]=parseInt("100001000000",2);
+charMap["D"]=parseInt("100000100000",2);
+charMap["E"]=parseInt("100000010000",2);
+charMap["F"]=parseInt("100000001000",2);
+charMap["G"]=parseInt("100000000100",2);
+charMap["H"]=parseInt("100000000010",2);
+charMap["I"]=parseInt("100000000001",2);
+charMap["J"]=parseInt("010100000000",2);
+charMap["K"]=parseInt("010010000000",2);
+charMap["L"]=parseInt("010001000000",2);
+charMap["M"]=parseInt("010000100000",2);
+charMap["N"]=parseInt("010000010000",2);
+charMap["O"]=parseInt("010000001000",2);
+charMap["P"]=parseInt("010000000100",2);
+charMap["Q"]=parseInt("010000000010",2);
+charMap["R"]=parseInt("010000000001",2);
+charMap["/"]=parseInt("001100000000",2);
+charMap["S"]=parseInt("001010000000",2);
+charMap["T"]=parseInt("001001000000",2);
+charMap["U"]=parseInt("001000100000",2);
+charMap["V"]=parseInt("001000010000",2);
+charMap["W"]=parseInt("001000001000",2);
+charMap["X"]=parseInt("001000000100",2);
+charMap["Y"]=parseInt("001000000010",2);
+charMap["Z"]=parseInt("001000000001",2);
+charMap[":"]=parseInt("000010000010",2);
+charMap["#"]=parseInt("000001000010",2);
+charMap["@"]=parseInt("000000100010",2);
+charMap["'"]=parseInt("000000010010",2);
+charMap["="]=parseInt("000000001010",2);
+charMap['"']=parseInt("000000000110",2);
+charMap["`"]=parseInt("100010000010",2);
+charMap["."]=parseInt("100001000010",2);
+charMap["<"]=parseInt("100000100010",2);
+charMap["("]=parseInt("100000010010",2);
+charMap["+"]=parseInt("100000001010",2);
+charMap["|"]=parseInt("100000000110",2);
+charMap["!"]=parseInt("010010000010",2);
+charMap["$"]=parseInt("010001000010",2);
+charMap["*"]=parseInt("010000100010",2);
+charMap[")"]=parseInt("010000010010",2);
+charMap[";"]=parseInt("010000001010",2);
+charMap["^"]=parseInt("010000000110",2);
+charMap["~"]=parseInt("001010000010",2);
+charMap[","]=parseInt("001001000010",2);
+charMap["%"]=parseInt("001000100010",2);
+charMap["_"]=parseInt("001000010010",2);
+charMap[">"]=parseInt("001000001010",2);
+charMap["?"]=parseInt("001000000110",2);
+charMap[" "]=parseInt("000000000000",2);
+
+let badChars=new Set();
+let toastTimer=null;
+
+function getPattern(c){
+    return charMap[c.toUpperCase()];
+}
+
+function showToast(msg){
+    const t=document.getElementById("toast");
+    t.textContent=msg;
+    t.style.display="block";
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.style.display="none",2500);
+}
+
+function init(){
+    canvas.width=bg.width;
+    canvas.height=bg.height;
+    render();
+    input.addEventListener("input",render);
+    document.getElementById("saveBtn").addEventListener("click",savePNG);
+    startTypingAnimation();
+}
+
+function render(){
+    ctx.drawImage(bg,0,0);
+    const text=input.value;
+    badChars=new Set();
+    for(let c=0;c<COLS&&c<text.length;c++){
+        const pat=getPattern(text[c]);
+        if(pat===undefined){
+            badChars.add(text[c]);
+            continue;
+        }
+        const x=originX+c*colSpacing;
+        for(let r=0;r<ROWS;r++){
+            if((1<<(11-r))&pat){
+                ctx.drawImage(hole,x-20,originY+r*rowSpacing-34);
+            }
+        }
+    }
+    if(badChars.size){
+        const list=[...badChars].map(ch=>`"${ch}"`).join(", ");
+        showToast(`Character${badChars.size>1?"s":""} not supported: ${list}`);
+    }
+}
+
+function savePNG(){
+    const a=document.createElement("a");
+    a.href=canvas.toDataURL("image/png");
+    a.download="punchedcard.png";
+    a.click();
+}
+
+/* Typing animation */
+let animTimer=null;
+
+function startTypingAnimation(){
+    const lines=["hello world!","The sky is white as clay, with no sun"];
+    let lineIdx=0;
+    let charIdx=0;
+    let clearing=false;
+    let playing=true;
+
+    function stop(){
+        playing=false;
+        if(animTimer){
+            clearTimeout(animTimer);
+            animTimer=null;
+        }
+    }
+
+    function step(){
+        if(!playing) return;
+        if(clearing){
+            if(charIdx>0){
+                charIdx--;
+                input.value=lines[lineIdx].slice(0,charIdx);
+                render();
+                animTimer=setTimeout(step,30);
+            } else {
+                clearing=false;
+                lineIdx=(lineIdx+1)%lines.length;
+                animTimer=setTimeout(step,400);
+            }
+        } else {
+            if(charIdx<lines[lineIdx].length){
+                charIdx++;
+                input.value=lines[lineIdx].slice(0,charIdx);
+                render();
+                animTimer=setTimeout(step,90);
+            } else {
+                clearing=true;
+                animTimer=setTimeout(step,1800);
+            }
+        }
+    }
+
+    input.addEventListener("focus",stop,{once:true});
+    input.addEventListener("keydown",stop,{once:true});
+
+    step();
+}
+</script>
+
+</body>
+</html>
