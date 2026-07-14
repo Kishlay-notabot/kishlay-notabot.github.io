@@ -424,6 +424,8 @@ charMap["_"]=parseInt("001000010010",2);
 charMap[">"]=parseInt("001000001010",2);
 charMap["?"]=parseInt("001000000110",2);
 charMap[" "]=parseInt("000000000000",2);
+charMap["\xA2"]=parseInt("100010000010",2);
+charMap["\xAC"]=parseInt("010000000110",2);
 
 const textOffsetX=15;
 const textOffsetY=2;
@@ -435,14 +437,10 @@ const SPRITE_H=50;
 const SPRITE_GAP=1;
 
 const charToSprite=new Map();
-const seq="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#,$.-@%*<-/+_)|&>:;"+"'"+'?"=!(,';
-let si=0;
-for(let p=0;p<seq.length;p++){
-    if(si===50||si===56)si++;
-    charToSprite.set(seq[p],si);
-    si++;
-}
-charToSprite.set('~',charToSprite.get('-'));
+const seq="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#,$.-@%*<-/+_)\xA2|&>:;\xAC'?"+'"=!(,.';
+for(let p=0;p<seq.length;p++)charToSprite.set(seq[p],p);
+charToSprite.set('~',charToSprite.get('-')); 
+// no tilde sprite in original photo
 
 let badChars=new Set();
 let toastTimer=null;
