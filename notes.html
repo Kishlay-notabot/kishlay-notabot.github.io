@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <title>Semantic Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0B0B0D; --surface:#151518; --elevated:#1C1C20; --divider:rgba(255,255,255,.06);
-    --text:#ECECEF; --muted:#9A9AA3; --accent:#8ABDB0; --on-accent:#08110F; --danger:#FF6B6B;
+    --text:#ECECEF; --muted:#B0B0B9; --accent:#8ABDB0; --on-accent:#08110F; --danger:#FF6B6B;
     --r-card:16px; --r-chip:18px; --r-dock:28px; --space:8px;
     --sidebar-w:280px; --desktop-app-w:1040px;
     --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -272,7 +273,7 @@
     .tag-sidebar{
       display:flex;flex-direction:column;position:fixed;top:0;bottom:0;
       right:0;width:var(--sidebar-w);
-      border-left:1px solid rgba(255,255,255,.3);background:var(--bg);
+      border-left:1px solid var(--divider);background:var(--bg);
       padding:18px 16px 120px;z-index:15;overflow-y:auto;scrollbar-width:thin;
       transition:transform .2s ease;
     }
@@ -315,6 +316,29 @@
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
   }
+
+  #layoutToggle{display:none}
+  .index-counter{display:none!important}
+  .day-header,.section-head,.section-title{font-size:12px}
+  .note-meta{font-size:12px}
+  .auto-badge{font-size:11px;padding:2px 6px}
+  .card-pin{width:40px;height:40px;margin:-8px -8px -8px auto}
+  .card-pin:not(.on){opacity:.4}
+  .card-pin:not(.on):hover,.card-pin:focus-visible{opacity:1}
+  .note-text{font-size:15px;line-height:21px}
+  .tag-panel .tag-row .icon-btn{width:44px;height:44px}
+  .swatch{width:32px;height:32px}
+  .tag-option{min-height:44px;padding:10px 14px;font-size:13px}
+  .chip{height:40px}
+  body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:130px;pointer-events:none;z-index:25;
+    background:linear-gradient(rgba(11,11,13,0),var(--bg) 72%)}
+  .dock-wrap{z-index:30}
+  .demo-banner{padding:10px 12px}
+  .editor-tags{margin-bottom:14px}
+
+
+  .brand-name{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:16px;font-weight:600;letter-spacing:-.02em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -324,7 +348,7 @@
 </button>
 <div id="app">
   <header class="appbar">
-    <div class="brand"><span class="brand-dot"></span><span>Semantic Notes</span><span id="indexCounter" class="index-counter hidden" title="Embeddings ready / notes"></span></div>
+    <div class="brand"><span class="brand-name">Semantic Notes</span><span id="indexCounter" class="index-counter hidden" title="Embeddings ready / notes"></span></div>
     <div class="appbar-actions">
       <button id="searchToggle" class="icon-btn" aria-label="Search" title="Search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg>
@@ -345,7 +369,7 @@
     <span class="spinner" aria-hidden="true"></span><span>Loading model…</span>
   </div>
 
-  <div id="searchWrap" class="search-wrap">
+  <div id="searchWrap" class="search-wrap hidden">
     <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
     <input id="searchInput" type="search" placeholder="Search notes" autocomplete="off" spellcheck="false" aria-label="Search notes">
     <button id="searchClear" class="search-clear hidden" aria-label="Clear search">Clear</button>
@@ -390,7 +414,7 @@ const MODEL_ID = 'onnx-community/embeddinggemma-2-ONNX';
 const MODEL_PAGE = 'https://huggingface.co/onnx-community/embeddinggemma-2-ONNX';
 const MODEL_PREFIX = 'task: classification | query: ';
 const MAX_INPUT_CHARS = 480;
-const SEARCH_FLOOR = 0.25;
+const SEARCH_FLOOR = 0.35;
 const TAG_FLOOR_MIN = 0.3;
 const TAG_FLOOR_MAX = 0.9;
 const TAG_MAX = 8;
@@ -1090,7 +1114,7 @@ async function attemptLoad(tf, device, dtype) {
     refreshModelUI();
     renderAll();
     indexUnindexed({ quiet: true });
-    showToast(`Smart features ready · ${dtype} · ${device === 'webgpu' ? 'WebGPU' : 'WASM'}`);
+    showToast('Smart search is ready.');
     return true;
   } catch (e) {
     try { await m?.dispose?.(); } catch { /* ignore */ }
@@ -1533,14 +1557,14 @@ function renderDemoBanner() {
     return;
   }
   el.classList.remove('hidden');
-  el.innerHTML = `<div class="demo-copy"><strong>Demo notebook</strong><span>${state.notes.length} sample note${state.notes.length === 1 ? '' : 's'} to try tags and search. Clear them whenever you're ready.</span></div><button class="btn primary" data-action="start-using">Get started</button>`;
+  el.innerHTML = `<div class="demo-copy"><strong>Demo notebook</strong><span>${state.notes.length} sample note${state.notes.length === 1 ? '' : 's'} to try tags and search. Clear them whenever you're ready.</span></div><button class="btn primary" data-action="start-using">Clear demo &amp; start</button>`;
 }
 
 function startUsing() {
   confirmDialog({
     title: 'Start using Semantic Notes?',
     message: 'This clears the demo notes and tags so you can set up your own notebook. Nothing is uploaded.',
-    confirmLabel: 'Get started',
+    confirmLabel: 'Clear demo',
     onConfirm: () => {
       state.notes = [];
       state.tags = [];
@@ -1604,7 +1628,7 @@ function noteCard(note, opts = {}) {
       ${metaTags}
       <span>${relativeTime(note.modified_at)}</span>
       ${opts.score != null ? `<span class="meta-score">${Math.round(opts.score * 100)}% match</span>` : ''}
-      ${note.pinned ? `<button class="card-pin on" data-pin-note="${note.id}" title="Unpin" aria-label="Unpin note" aria-pressed="true">${ICON.pin}</button>` : ''}
+      <button class="card-pin ${note.pinned ? 'on' : ''}" data-pin-note="${note.id}" title="${note.pinned ? 'Unpin' : 'Pin'}" aria-label="${note.pinned ? 'Unpin' : 'Pin'} note" aria-pressed="${note.pinned}">${ICON.pin}</button>
     </div>
   </article>`;
 }
@@ -1622,11 +1646,12 @@ function renderTagbar() {
   if (!el) return;
   const counts = new Map();
   for (const r of state.note_tags) counts.set(r.tag_id, (counts.get(r.tag_id) || 0) + 1);
-  const tags = state.tags.filter((t) => (counts.get(t.id) || 0) > 0 || t.id === selectedTagId);
+  const tags = state.tags.slice();
   let html = `<button class="chip ${!selectedTagId ? 'active' : ''}" data-tag-id="all">All</button>`;
   for (const t of tags) {
     html += `<button class="chip ${selectedTagId === t.id ? 'active' : ''}" data-tag-id="${t.id}"><span class="dot" style="background:${t.color}"></span>${escapeHtml(t.name)}</button>`;
   }
+  html += `<button class="chip" data-action="open-tags">+ Tag</button>`;
   el.innerHTML = html;
 }
 
@@ -1765,7 +1790,7 @@ function renderModelSection() {
     status = 'Loading model…';
     action = `<button class="btn" disabled>Loading…</button>`;
   } else if (s.status === 'ready') {
-    status = `Ready · ${s.dtype} · ${s.device === 'webgpu' ? 'WebGPU' : 'WASM'} · 768d`;
+    status = 'Ready';
     action = `<button class="btn danger" data-action="delete-model">Delete</button>`;
   } else if (s.status === 'error') {
     status = `Error · ${s.error || 'unknown'}`;
@@ -1839,6 +1864,7 @@ function showToast(message, actions = [], duration = 5000) {
 function openModal(html, onMount) {
   const root = $('#modalRoot');
   if (!root) return;
+  if (!root.innerHTML) window.__lf = document.activeElement;
   root.innerHTML = `<div class="overlay" data-action="close-modal"></div>${html}`;
   document.body.classList.add('modal-open');
   if (onMount) onMount();
@@ -1849,6 +1875,7 @@ function closeModal() {
   if (!root) return;
   root.innerHTML = '';
   document.body.classList.remove('modal-open');
+  if (window.__lf && document.contains(window.__lf)) window.__lf.focus();
 }
 
 function confirmDialog({ title, message, confirmLabel = 'Confirm', danger = false, onConfirm }) {
@@ -2044,7 +2071,7 @@ function renderSearchResults() {
     html += `<section class="search-section"><div class="section-head">Keyword matches · ${keyword.length}</div><div class="notes ${state.settings.layout === 'grid' ? 'grid' : ''}">${keyword.map((n) => noteCard(n)).join('')}</div></section>`;
   }
   if (semantic.length) {
-    html += `<section class="search-section"><div class="section-head">Related notes · ${semantic.length}</div><div class="notes ${state.settings.layout === 'grid' ? 'grid' : ''}">${semantic.map((x) => noteCard(x.note, { score: x.score })).join('')}</div></section>`;
+    html += `<section class="search-section"><div class="section-head">Related notes · ${semantic.length}</div><div class="search-empty" style="padding-top:0">Similar in meaning, not exact words.</div><div class="notes ${state.settings.layout === 'grid' ? 'grid' : ''}">${semantic.map((x) => noteCard(x.note, { score: x.score })).join('')}</div></section>`;
   }
   if (!keyword.length && !semantic.length) {
     html += `<div class="empty"><strong>No matches for “${escapeHtml(truncate(q, 40))}”</strong>${searchState.status === 'keyword-only' && !embedder ? 'Download the model to also search by meaning.' : 'Try different words.'}</div>`;
@@ -2072,16 +2099,15 @@ function openEditor(id) {
       </button>
     </div>
     <div class="sheet-body">
+      <div class="tag-picker editor-tags">${tagOptions}</div>
       <textarea id="editorText" aria-label="Note text"></textarea>
       <div id="editorMeta" class="editor-meta"></div>
-      <div class="section-title">Tags</div>
-      <div class="tag-picker">${tagOptions}</div>
     </div>
     <div class="sheet-foot">
       <button class="btn danger" data-action="editor-delete">Delete</button>
       <button class="btn" data-action="editor-pin" id="editorPin">Pin</button>
       <button class="btn" data-action="editor-copy" id="editorCopy">Copy</button>
-      <button class="btn primary" data-action="editor-save">Save</button>
+      <button class="btn primary" data-action="editor-save">Done</button>
     </div>
   </div>`, () => {
     const ta = $('#editorText');
@@ -2397,7 +2423,7 @@ function openSettings(focus = null) {
         </div>
         <div class="setting">
           <div style="flex:1;min-width:0">
-            <div class="setting-label">Match strength</div>
+            <div class="setting-label">Suggestion confidence</div>
             <div class="setting-desc">Higher means fewer, more confident suggestions.</div>
           </div>
           <div style="display:flex;align-items:center;gap:10px">
@@ -2438,7 +2464,8 @@ function openSettings(focus = null) {
           <button class="btn" data-action="import-json">Import backup</button>
         </div>
         <div class="setting-desc" style="margin-top:10px">Backups are JSON with schema version 2, compatible with the Android app. Embeddings are not included; they rebuild after import.</div>
-        <div class="actions-row">
+        </div><div class="settings-section" style="border:1px solid rgba(255,107,107,.28);border-radius:14px;padding:14px;margin-top:22px"><div class="section-title" style="color:var(--danger)">Danger zone</div>
+        <div class="actions-row" style="margin-top:0">
           <button class="btn danger" data-action="reset-user">Reset user</button>
           <button class="btn danger" data-action="clear-all">Delete all notes</button>
         </div>
@@ -2808,7 +2835,7 @@ function autoGrowCapture() {
   if (!ta) return;
   ta.style.height = 'auto';
   ta.style.height = Math.min(154, Math.max(24, ta.scrollHeight)) + 'px';
-  $('#sendBtn').disabled = !ta.value.trim();
+  $('#sendBtn').disabled = !ta.value.trim(); $('#pasteBtn')?.classList.toggle('hidden', !!ta.value.trim());
 }
 
 async function saveFromDock() {
@@ -2827,7 +2854,7 @@ document.addEventListener('click', async (e) => {
   if (actionEl) {
     const action = actionEl.dataset.action;
     const handlers = {
-      'close-modal': () => closeModal(),
+      'close-modal': () => { if (editingId != null && $('#editorText')) saveEditor(); else closeModal(); },
       'open-settings-model': () => openSettings('model'),
       'download-model': () => loadModel({ device: null, dtype: null }),
       'delete-model': () => confirmDialog({
@@ -2865,15 +2892,8 @@ document.addEventListener('click', async (e) => {
       'reset-user': resetUser,
       'editor-save': saveEditor,
       'editor-delete': () => {
-        const id = editingId;
-        if (id == null) return;
-        confirmDialog({
-          title: 'Delete this note?',
-          message: 'This cannot be undone.',
-          confirmLabel: 'Delete',
-          danger: true,
-          onConfirm: () => deleteNote(id),
-        });
+        if (editingId == null) return;
+        deleteWithUndo(editingId);
       },
       'editor-pin': () => {
         if (editingId == null) return;
@@ -2973,8 +2993,7 @@ document.addEventListener('keydown', (e) => {
       return;
     }
     if ($('#modalRoot')?.innerHTML) {
-      closeModal();
-      editingId = null;
+      if (editingId != null && $('#editorText')) saveEditor(); else closeModal();
       tagForm = null;
       return;
     }
@@ -3041,9 +3060,9 @@ $('#pasteBtn')?.addEventListener('click', async () => {
     return;
   }
   const ta = capture();
-  if (ta && ta.value.trim() && !confirm('Replace what you are typing with the clipboard?')) return;
+  const prev = ta && ta.value.trim() ? ta.value.trimEnd() + '\n' : '';
   if (ta) {
-    ta.value = text;
+    ta.value = prev + text;
     autoGrowCapture();
     ta.focus();
   }
@@ -3185,6 +3204,35 @@ async function boot() {
     setTimeout(() => { autoLoadModel(); }, 500);
   }
 }
+
+function deleteWithUndo(id) {
+  const n = getNote(id);
+  if (!n) return;
+  const snap = { note: { ...n }, refs: state.note_tags.filter((r) => r.note_id === id).map((r) => ({ ...r })) };
+  deleteNote(id);
+  showToast('Note deleted.', [{ label: 'Undo', fn: () => {
+    state.notes.push(snap.note);
+    state.note_tags.push(...snap.refs);
+    saveState(true);
+    renderAll();
+    enqueueNote(snap.note.id);
+  } }], 7000);
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Tab') return;
+  const sheet = $('#modalRoot .sheet');
+  if (!sheet) return;
+  const f = $$('button,textarea,input,a[href]', sheet).filter((x) => !x.disabled && x.offsetParent);
+  if (!f.length) return;
+  const a = f[0], z = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+  else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+});
+
+$('#searchInput')?.addEventListener('blur', () => {
+  if (!$('#searchInput').value.trim()) setTimeout(() => $('#searchWrap')?.classList.add('hidden'), 150);
+});
 
 boot().catch((e) => {
   console.error('Failed to start', e);
