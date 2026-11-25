@@ -339,6 +339,8 @@
 
   .brand-name{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:16px;font-weight:600;letter-spacing:-.02em;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gh-link{display:inline-block;margin-top:6px;font-size:13px;font-weight:600;text-decoration:none}
+  .gh-link:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -407,6 +409,7 @@
    The optional model is EmbeddingGemma 2 (text tower only) via transformers.js.
    ========================================================================== */
 
+const GITHUB_URL = 'https://github.com/Kishlay-notabot/semantic-notes-web';
 const STORAGE_KEY = 'semantic-notes:v1';
 const VEC_PREFIX = 'sn:vec:';
 const TAGVEC_PREFIX = 'sn:tagvec:';
@@ -1623,7 +1626,7 @@ function noteCard(note, opts = {}) {
     `<span class="meta-tag"><span class="dot" style="background:${t.color}"></span>${escapeHtml(t.name)}${state.settings.showAutoBadge && autoIds.has(t.id) ? ' <span class="auto-badge">suggested</span>' : ''}</span>`
   ).join('');
   return `<article class="note-card" data-note-id="${note.id}" tabindex="0" role="button" aria-label="Open note">
-    <div class="note-text">${escapeHtml(preview)}</div>
+    <div class="note-text">${escapeHtml(preview)}</div>${state.settings.demoActive && text === 'Welcome to Semantic Notes' ? `<a class="gh-link" href="${GITHUB_URL}" target="_blank" rel="noopener noreferrer">★ Star on GitHub</a>` : ''}
     <div class="note-meta">
       ${metaTags}
       <span>${relativeTime(note.modified_at)}</span>
@@ -2474,6 +2477,7 @@ function openSettings(focus = null) {
 
       <div class="settings-section">
         <div class="section-title">About</div>
+        <div class="setting-desc" style="margin-bottom:8px"><a href="${GITHUB_URL}" target="_blank" rel="noopener noreferrer">★ Star on GitHub</a></div>
         <div class="setting-desc">Semantic Notes runs entirely in your browser. Notes, tags and settings live in this site's local storage; nothing is uploaded. Deleting site data removes everything, so export a backup.</div>
         <div class="setting-desc" style="margin-top:8px">Model: <a href="${MODEL_PAGE}" target="_blank" rel="noreferrer">${MODEL_ID}</a> · text tower only · 768-dimension embeddings.</div>
       </div>
@@ -2850,6 +2854,7 @@ async function saveFromDock() {
 }
 
 document.addEventListener('click', async (e) => {
+  if (e.target.closest('a[href]')) return;
   const actionEl = e.target.closest('[data-action]');
   if (actionEl) {
     const action = actionEl.dataset.action;
